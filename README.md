@@ -63,6 +63,20 @@ Messages you might see:
   (click the icon again), or you already opened the mail in Gmail — the feed
   lists **unread** mail only.
 
+### Hotkey
+
+**Alt+Shift+C** (Option+Shift+C on Mac) copies the newest OTP without
+opening the popup. The toolbar icon flashes a badge for 3 seconds:
+
+- green `✓` — copied, paste away
+- red `×` — no unread OTP in the last 20 minutes
+- red `!` — couldn't read the feed (Firefox: open the popup once and grant
+  access; otherwise check you're signed into Gmail)
+
+Rebind it at `chrome://extensions/shortcuts`, or in Firefox at
+`about:addons` → gear menu → **Manage Extension Shortcuts** (same pages to
+fix it if the default ever collides with another extension).
+
 ## Is it safe? What can it see?
 
 Short version: less than any Gmail tab you already have open.
@@ -75,8 +89,10 @@ Short version: less than any Gmail tab you already have open.
   live and forgets on close.
 - **Nothing leaves your browser.** The only host it may contact is
   `mail.google.com`; there is no analytics, no third-party server.
-- Permissions in `manifest.json`: `clipboardWrite` + host access to
-  `mail.google.com`. That's the whole list.
+- Permissions in `manifest.json`: `clipboardWrite`, host access to
+  `mail.google.com`, and `offscreen` — a Chrome-internal mechanic (the only
+  way a background worker can reach the clipboard for the hotkey; Firefox
+  ignores it). That's the whole list.
 - Small enough to audit yourself before installing: `popup.js` (fetch +
   render) and `extractor.js` (code ranking) — a few hundred lines, no
   dependencies, no build step.

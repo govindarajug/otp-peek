@@ -41,10 +41,22 @@ retires the feed.
 - Firefox container tabs keep Gmail cookies in container jars the extension
   can't read — documented, not solvable in code.
 
+## Hotkey (v1.3)
+- `commands.copy-latest-otp`, default Alt+Shift+C, headless: background
+  script reuses feed.js + extractor, copies top code, flashes action badge
+  (✓ copied / × none / ! error-or-ungranted) for 3s.
+- Cross-browser background: manifest declares both `service_worker`
+  (Chrome) and `scripts` (Firefox event page); Chrome side importScripts
+  the shared files, guarded on `typeof OtpPeek`.
+- Clipboard from background: Firefox event page writes directly
+  (clipboardWrite); Chrome service worker relays to an offscreen document
+  (reason CLIPBOARD, execCommand — navigator.clipboard needs focus).
+- Transport shared via feed.js (fetchFeed/collectRows moved out of popup.js).
+
 ## Permissions & security
 - `host_permissions`: `https://mail.google.com/*` only.
-- `permissions`: `clipboardWrite` only (`scripting` + content script dropped
-  in v1.1).
+- `permissions`: `clipboardWrite` + `offscreen` (Chrome-internal clipboard
+  relay; Firefox ignores it). `scripting` + content script dropped in v1.1.
 - No storage, no remote code, no hosts beyond mail.google.com; codes fetched
   live per popup open, never persisted.
 
