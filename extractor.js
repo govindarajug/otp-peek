@@ -74,7 +74,43 @@ function ageStr(seconds) {
   return `${Math.floor(seconds / 3600)}h ago`;
 }
 
-const OtpPeek = { extractCodes, rankRows, ageStr, LOOKBACK_MS };
+// Gmail's legacy inbox atom feed (Atom 0.3) is flat escaped text — no CDATA,
+// no attributes on the tags we read — so targeted regexes beat a DOM parser
+// and keep this testable under node --test (which has no DOMParser).
+const XML_ENTITIES = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'" };
+
+function unescapeXml(text) {
+  return text.replace(/&(#x?[0-9a-fA-F]+|[a-z]+);/g, (whole, entity) => {
+    if (entity[0] !== "#") return XML_ENTITIES[entity] ?? whole;
+    const codePoint = entity[1] === "x"
+      ? parseInt(entity.slice(2), 16)
+      : parseInt(entity.slice(1), 10);
+    return Number.isNaN(codePoint) ? whole : String.fromCodePoint(codePoint);
+  });
+}
+
+function tagText(xml, tag) {
+  const m = xml.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`));
+  return m ? unescapeXml(m[1]).trim() : "";
+}
+
+function parseFeed(xmlText) {
+  const rows = [];
+  for (const m of xmlText.matchAll(/<entry>([\s\S]*?)<\/entry>/g)) {
+    const entry = m[1];
+    const issued = tagText(entry, "issued");
+    const parsed = Date.parse(issued);
+    rows.push({
+      subject: tagText(entry, "title"),
+      snippet: tagText(entry, "summary"),
+      sender: tagText(entry, "name") || tagText(entry, "email"),
+      ts: Number.isNaN(parsed) ? null : parsed,
+    });
+  }
+  return rows;
+}
+
+const OtpPeek = { extractCodes, rankRows, ageStr, parseFeed, LOOKBACK_MS };
 if (typeof module !== "undefined" && module.exports) {
   module.exports = OtpPeek;
 }

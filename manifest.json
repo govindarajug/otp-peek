@@ -1,19 +1,12 @@
 {
   "manifest_version": 3,
   "name": "OTP Peek",
-  "version": "1.0.0",
-  "description": "Shows the newest OTP from your open Gmail tab. Click to copy. Nothing leaves your browser.",
+  "version": "1.1.0",
+  "description": "Shows your newest Gmail OTP. Click to copy. No Gmail tab needed; nothing leaves your browser.",
   "action": {
     "default_popup": "popup.html",
     "default_title": "OTP Peek"
   },
-  "permissions": ["scripting", "clipboardWrite"],
-  "host_permissions": ["https://mail.google.com/*"],
-  "content_scripts": [
-    {
-      "matches": ["https://mail.google.com/*"],
-      "js": ["content.js"],
-      "run_at": "document_idle"
-    }
-  ]
+  "permissions": ["clipboardWrite"],
+  "host_permissions": ["https://mail.google.com/*"]
 }

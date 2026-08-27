@@ -1,16 +1,25 @@
-# otp-peek — spec (Chrome extension, Gmail-tab reader)
+# otp-peek — spec (Chrome extension, Gmail feed reader)
 
-Approved 2026-08-27. Supersedes the aborted Raycast/Gmail-API lane: no GCP
-project, no OAuth, no Google setup of any kind.
+v1 approved 2026-08-27 (Gmail-tab DOM scraper); v1.1 approved same day —
+feed transport replaces the tab scraper after "must keep a Gmail tab open
+and reload it" feedback. Still: no GCP project, no OAuth, no Google setup.
 
-## Data path
-1. Popup opens → `chrome.tabs.query` for `https://mail.google.com/*` tabs.
-2. Content script (auto-injected via `scripting` if the tab predates install)
-   scrapes inbox list rows — subject `.bog`, snippet `.y2`, timestamp
-   `.xW span[title]`, sender `span[email]` — selectors only, no logic.
-3. Popup filters rows to last 20 min (unparseable/locale timestamps kept,
-   ranked last), runs the extractor, renders top 3: code, sender, age.
+## Data path (v1.1)
+1. Popup opens → `fetch("https://mail.google.com/mail/u/N/feed/atom")` for
+   account slots N = 0..2, `credentials: "include"` (session cookie auth).
+   Server-side fresh every click — no Gmail tab, no reload. Signed-out
+   slots return login HTML (no `<feed`) and are skipped; responses are
+   deduped by `ts|subject` across slots.
+2. `parseFeed` (pure, regex-based — the Atom 0.3 feed is flat escaped text,
+   and node --test has no DOMParser) maps entries to rows: subject/title,
+   snippet/summary, sender/author, ts from ISO `<issued>` (locale-proof).
+3. Popup filters rows to last 20 min (null ts kept, ranked last), runs the
+   extractor, renders top 3: code, sender, age.
 4. Click row → `navigator.clipboard.writeText`, "copied", popup closes.
+
+Feed lists **unread** inbox mail only — OTPs are unread on arrival. v1.0's
+content-script scraper (git history) is the fallback design if Google ever
+retires the feed.
 
 ## Extractor (pure, tested)
 - Digit candidates `\b\d{4,8}\b`; uppercase alphanumeric `\b[A-Z0-9]{5,8}\b`
@@ -23,23 +32,24 @@ project, no OAuth, no Google setup of any kind.
 
 ## Permissions & security
 - `host_permissions`: `https://mail.google.com/*` only.
-- `permissions`: `scripting` (inject into pre-existing Gmail tabs),
-  `clipboardWrite`.
-- No storage, no network calls, no remote code; codes read live per popup
-  open, never persisted.
+- `permissions`: `clipboardWrite` only (`scripting` + content script dropped
+  in v1.1).
+- No storage, no remote code, no hosts beyond mail.google.com; codes fetched
+  live per popup open, never persisted.
 
 ## States
-- No Gmail tab → "open mail.google.com". No recent code → "no OTP in last 20m".
+- No Gmail session cookie → "Sign in to Gmail in this browser first."
+- Nothing recent/unread → "No unread OTP in the last 20 minutes."
 
 ## Known tradeoffs
-- Gmail classnames are Google's to break; all selectors live in one function.
-- Needs a Gmail tab open (pinned tab works).
-- Timestamp parsing assumes English Gmail locale; other locales degrade to
-  unranked-by-age, not broken.
+- Unread-only: a code already read in Gmail stops appearing.
+- Legacy feed endpoint is Google's to retire; scraper design in git history
+  is the fallback.
 
 ## Testing
-- `node --test test/` on the extractor (dual browser-global/CJS export).
-- Content script + popup glue: manual (load unpacked, live Gmail).
+- `node --test test/extractor.test.js` on extractor + feed parser (dual
+  browser-global/CJS export).
+- Fetch + popup glue: manual (load unpacked, live Gmail).
 
 ## Out of scope v1
 - Auto-fill into OTP fields, icons, store publishing, non-Gmail providers.

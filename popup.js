@@ -1,24 +1,47 @@
 "use strict";
-// Popup: pull rows from Gmail tabs, rank via OtpPeek (extractor.js), render.
+// Popup: fetch Gmail's unread-inbox atom feeds (cookie-authed, server-side
+// fresh — no Gmail tab needed), rank via OtpPeek (extractor.js), render.
 
 const statusEl = document.getElementById("status");
 const listEl = document.getElementById("list");
+const ACCOUNT_SLOTS = 3;
 
 function showStatus(text) {
   statusEl.textContent = text;
   statusEl.hidden = false;
 }
 
-async function getRowsFromTab(tabId) {
-  try {
-    const resp = await chrome.tabs.sendMessage(tabId, { type: "getRows" });
-    return resp.rows;
-  } catch {
-    // Tab predates install — inject, then retry once.
-    await chrome.scripting.executeScript({ target: { tabId }, files: ["content.js"] });
-    const resp = await chrome.tabs.sendMessage(tabId, { type: "getRows" });
-    return resp.rows;
+async function fetchFeed(accountIndex) {
+  const resp = await fetch(`https://mail.google.com/mail/u/${accountIndex}/feed/atom`, {
+    credentials: "include",
+  });
+  if (!resp.ok) return null;
+  const text = await resp.text();
+  // Signed-out slots redirect to a login HTML page — not a feed.
+  return text.includes("<feed") ? OtpPeek.parseFeed(text) : null;
+}
+
+async function collectRows() {
+  const rows = [];
+  const seen = new Set();
+  let anyFeed = false;
+  for (let u = 0; u < ACCOUNT_SLOTS; u++) {
+    let feedRows = null;
+    try {
+      feedRows = await fetchFeed(u);
+    } catch {
+      // network error or absent account slot — skip
+    }
+    if (feedRows === null) continue;
+    anyFeed = true;
+    for (const row of feedRows) {
+      const key = `${row.ts}|${row.subject}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      rows.push(row);
+    }
   }
+  return { rows, anyFeed };
 }
 
 function render(ranked) {
@@ -43,27 +66,14 @@ function render(ranked) {
 }
 
 async function init() {
-  const tabs = await chrome.tabs.query({ url: "https://mail.google.com/*" });
-  if (tabs.length === 0) {
-    showStatus("Open mail.google.com first, then try again.");
+  const { rows, anyFeed } = await collectRows();
+  if (!anyFeed) {
+    showStatus("Sign in to Gmail in this browser first.");
     return;
-  }
-  const rows = [];
-  let failedTabs = 0;
-  for (const tab of tabs) {
-    try {
-      rows.push(...(await getRowsFromTab(tab.id)));
-    } catch {
-      failedTabs += 1;
-    }
   }
   const ranked = OtpPeek.rankRows(rows, Date.now()).slice(0, 3);
   if (ranked.length === 0) {
-    showStatus(
-      rows.length === 0 && failedTabs > 0
-        ? "Couldn't read the Gmail tab — click it once, then retry."
-        : "No OTP in the last 20 minutes."
-    );
+    showStatus("No unread OTP in the last 20 minutes.");
     return;
   }
   render(ranked);

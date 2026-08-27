@@ -102,3 +102,43 @@ test("ageStr minutes", () => {
 test("ageStr hours", () => {
   assert.equal(ageStr(7200), "2h ago");
 });
+
+const { parseFeed } = require("../extractor.js");
+
+const FEED = `<?xml version="1.0" encoding="UTF-8"?>
+<feed version="0.3" xmlns="http://purl.org/atom/ns#">
+<title>Gmail - Inbox for g@x.io</title>
+<entry><title>824119 is your GitHub code</title><summary>824119 is your GitHub authentication code.</summary><issued>2026-08-27T09:00:00Z</issued><author><name>GitHub</name><email>noreply@github.com</email></author></entry>
+<entry><title>Your Slack sign-in code</title><summary>Confirmation code: 774431</summary><issued>2026-08-27T09:05:00Z</issued><author><name>Slack</name><email>no-reply@slack.com</email></author></entry>
+</feed>`;
+
+test("parseFeed: maps entries to rows", () => {
+  const rows = parseFeed(FEED);
+  assert.equal(rows.length, 2);
+  assert.equal(rows[0].subject, "824119 is your GitHub code");
+  assert.equal(rows[0].snippet, "824119 is your GitHub authentication code.");
+  assert.equal(rows[0].sender, "GitHub");
+  assert.equal(rows[0].ts, Date.parse("2026-08-27T09:00:00Z"));
+});
+
+test("parseFeed: unescapes XML entities", () => {
+  const xml = `<feed><entry><title>Tom &amp; Co &#8217;s code 5599</title><summary>&lt;b&gt;</summary><issued>2026-08-27T09:00:00Z</issued><author><name>Tom &amp; Co</name></author></entry></feed>`;
+  const rows = parseFeed(xml);
+  assert.equal(rows[0].subject, "Tom & Co ’s code 5599");
+  assert.equal(rows[0].snippet, "<b>");
+  assert.equal(rows[0].sender, "Tom & Co");
+});
+
+test("parseFeed: missing issued gives null ts", () => {
+  const rows = parseFeed(`<feed><entry><title>code 1234</title><summary>s</summary><author><name>A</name></author></entry></feed>`);
+  assert.equal(rows[0].ts, null);
+});
+
+test("parseFeed: author email used when name missing", () => {
+  const rows = parseFeed(`<feed><entry><title>t</title><summary>s</summary><issued>2026-08-27T09:00:00Z</issued><author><email>x@y.io</email></author></entry></feed>`);
+  assert.equal(rows[0].sender, "x@y.io");
+});
+
+test("parseFeed: empty feed gives empty rows", () => {
+  assert.deepEqual(parseFeed(`<?xml version="1.0"?><feed><title>Inbox</title></feed>`), []);
+});
