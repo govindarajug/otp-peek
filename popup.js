@@ -5,6 +5,8 @@
 const statusEl = document.getElementById("status");
 const listEl = document.getElementById("list");
 const ACCOUNT_SLOTS = 3;
+const FEED_ORIGINS = ["https://mail.google.com/*"];
+const ext = globalThis.browser ?? globalThis.chrome;
 
 function showStatus(text) {
   statusEl.textContent = text;
@@ -65,7 +67,29 @@ function render(ranked) {
   }
 }
 
+// Chrome grants host_permissions at install; Firefox MV3 makes them opt-in,
+// so first run needs a one-click grant (request must run in a user gesture).
+async function ensureHostPermission() {
+  if (await ext.permissions.contains({ origins: FEED_ORIGINS })) return true;
+  return new Promise((resolve) => {
+    const button = document.createElement("button");
+    button.className = "row";
+    button.textContent = "Grant Gmail access";
+    button.addEventListener("click", async () => {
+      const granted = await ext.permissions.request({ origins: FEED_ORIGINS });
+      if (granted) {
+        button.remove();
+        statusEl.hidden = true;
+      }
+      resolve(granted);
+    });
+    showStatus("One-time permission needed to read your Gmail feed.");
+    listEl.append(button);
+  });
+}
+
 async function init() {
+  if (!(await ensureHostPermission())) return;
   const { rows, anyFeed } = await collectRows();
   if (!anyFeed) {
     showStatus("Sign in to Gmail in this browser first.");

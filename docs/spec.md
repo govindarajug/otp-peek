@@ -30,6 +30,17 @@ retires the feed.
   4-digit years 1900–2099 preceded (≤12 chars) by ©/(c)/copyright/month name.
 - `rankRows(rows, nowMs)` → rows-with-best-code, newest first, cutoff 20 min.
 
+## Cross-browser (v1.2)
+- One manifest for both engines: `browser_specific_settings.gecko` (id,
+  min 128, no data collection) is Firefox-only and merely warns in Chrome.
+- Popup uses no `chrome.*`/`browser.*` APIs except `permissions`, accessed
+  via `globalThis.browser ?? globalThis.chrome`.
+- Firefox MV3 host permissions are opt-in → popup gates on
+  `permissions.contains`, offers a one-click `permissions.request` (user
+  gesture) before first fetch. Chrome: contains() is true at install.
+- Firefox container tabs keep Gmail cookies in container jars the extension
+  can't read — documented, not solvable in code.
+
 ## Permissions & security
 - `host_permissions`: `https://mail.google.com/*` only.
 - `permissions`: `clipboardWrite` only (`scripting` + content script dropped

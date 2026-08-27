@@ -10,8 +10,8 @@ which is fresh from the server on every click.
 
 ## Requirements
 
-- Chrome, or any Chromium browser that loads unpacked extensions (Edge,
-  Brave, Arc).
+- Chrome or any Chromium browser (Edge, Brave, Arc), **or** Firefox 128+ and
+  Firefox-based browsers (Zen, LibreWolf, Floorp, Waterfox).
 - Signed into Gmail in that browser — personal `@gmail.com` and Google
   Workspace accounts both work. Nothing else.
 
@@ -21,12 +21,32 @@ which is fresh from the server on every click.
 git clone https://github.com/govindarajue6data/otp-peek.git
 ```
 
+### Chrome / Chromium
+
 1. Go to `chrome://extensions` and toggle **Developer mode** (top right).
 2. Click **Load unpacked** and select the cloned `otp-peek` directory.
 3. Pin **OTP Peek** to the toolbar (puzzle icon → pin).
 
 To update later: `git pull`, then `chrome://extensions` → OTP Peek →
-**Reload**.
+**Reload**. (Chrome may warn about the `browser_specific_settings` manifest
+key — that's the Firefox section, safe to ignore.)
+
+### Firefox / Firefox-based
+
+1. Go to `about:debugging` → **This Firefox** → **Load Temporary Add-on** →
+   pick `manifest.json` in the cloned directory.
+2. Click the OTP Peek icon → click **Grant Gmail access** once (Firefox
+   treats host permissions as opt-in; Chrome grants them at install).
+
+Firefox notes:
+
+- Temporary add-ons unload when Firefox restarts — reload from
+  `about:debugging` after a restart. For a permanent install, Firefox-based
+  browsers and Firefox Developer Edition/ESR let you flip
+  `xpinstall.signatures.required` to `false` in `about:config` and install
+  the directory zipped as an `.xpi`; release Firefox requires AMO signing.
+- Using Multi-Account Containers: sign into Gmail in a normal (no-container)
+  tab too — the extension reads the default cookie jar, not container jars.
 
 ## Use
 
