@@ -1,5 +1,7 @@
 # OTP Peek
 
+![tests](https://github.com/govindarajue6data/otp-peek/actions/workflows/test.yml/badge.svg)
+
 Chrome extension: click the toolbar icon, see the newest OTP from your Gmail,
 click it — it's on your clipboard. No more switching to Gmail and hunting for
 the code mid-login.
@@ -118,8 +120,11 @@ Known tradeoffs:
 ## Development
 
 ```sh
-node --test test/extractor.test.js
+npm test          # 33 tests, stdlib runner, no install needed
+npm run coverage  # enforces 100% line/branch/function coverage on extractor.js
 ```
 
-All parsing/extraction/ranking logic is pure and tested; the fetch + popup
-glue is verified manually against live Gmail. Design notes: `docs/spec.md`.
+All parsing/extraction/ranking logic lives in `extractor.js` as pure
+functions at 100% test coverage, and CI fails any PR that drops it. The
+fetch + popup glue is verified manually against live Gmail. Contribution
+rules: `CONTRIBUTING.md`. Design notes: `docs/spec.md`.

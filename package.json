@@ -1,0 +1,10 @@
+{
+  "name": "otp-peek",
+  "version": "1.3.0",
+  "private": true,
+  "description": "Browser extension that shows your newest Gmail OTP. Zero dependencies by design.",
+  "scripts": {
+    "test": "node --test test/extractor.test.js",
+    "coverage": "node --test --experimental-test-coverage --test-coverage-include=extractor.js --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 test/extractor.test.js"
+  }
+}

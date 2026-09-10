@@ -1,0 +1,48 @@
+name: Bug report
+description: Something broke or a code was wrong/missing
+labels: [bug]
+body:
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      options:
+        - Chrome
+        - Edge / Brave / Arc (Chromium)
+        - Firefox
+        - Zen / LibreWolf / Floorp (Firefox-based)
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Extension version
+      description: From chrome://extensions or about:addons (e.g. 1.3.0)
+    validations:
+      required: true
+  - type: dropdown
+    id: symptom
+    attributes:
+      label: What went wrong?
+      options:
+        - Popup showed the wrong code
+        - Popup showed "No unread OTP" but the mail was there
+        - Popup showed "Sign in to Gmail" but I am signed in
+        - Hotkey did nothing / badge showed × or !
+        - Copy did not reach the clipboard
+        - Something else (explain below)
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, what you got instead.
+    validations:
+      required: true
+  - type: input
+    id: sender
+    attributes:
+      label: OTP mail sender + subject (optional, helps fix ranking)
+      description: "Example: GitHub — \"XXXXXX is your authentication code\". Replace the real code digits with X."

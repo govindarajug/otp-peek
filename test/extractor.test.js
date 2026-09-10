@@ -142,3 +142,57 @@ test("parseFeed: author email used when name missing", () => {
 test("parseFeed: empty feed gives empty rows", () => {
   assert.deepEqual(parseFeed(`<?xml version="1.0"?><feed><title>Inbox</title></feed>`), []);
 });
+
+test("extractCodes: two candidates ranked by keyword distance", () => {
+  assert.deepEqual(extractCodes("code 111222 and later somewhere else 333444"), [
+    "111222",
+    "333444",
+  ]);
+});
+
+test("parseFeed: hex numeric entity unescaped", () => {
+  const rows = parseFeed(`<feed><entry><title>It&#x27;s your code 4455</title><summary>s</summary><issued>2026-08-27T09:00:00Z</issued><author><name>A</name></author></entry></feed>`);
+  assert.equal(rows[0].subject, "It's your code 4455");
+});
+
+test("parseFeed: unknown named entity kept literal", () => {
+  const rows = parseFeed(`<feed><entry><title>code&nbsp;7788</title><summary>s</summary><issued>2026-08-27T09:00:00Z</issued><author><name>A</name></author></entry></feed>`);
+  assert.equal(rows[0].subject, "code&nbsp;7788");
+});
+
+test("parseFeed: unparseable numeric entity kept literal", () => {
+  const rows = parseFeed(`<feed><entry><title>code 9911 &#ff;</title><summary>s</summary><issued>2026-08-27T09:00:00Z</issued><author><name>A</name></author></entry></feed>`);
+  assert.equal(rows[0].subject, "code 9911 &#ff;");
+});
+
+test("year-shaped code without copyright/month context is kept", () => {
+  assert.deepEqual(extractCodes("Your verification code is 2043"), ["2043"]);
+});
+
+test("candidate farther than 200 chars from any keyword ignored", () => {
+  const filler = "x".repeat(210);
+  assert.deepEqual(extractCodes(`code ${filler} 40218`), []);
+});
+
+test("duplicate code counted once with best score", () => {
+  assert.deepEqual(extractCodes("code 111222 and again 111222"), ["111222"]);
+});
+
+test("all-caps word without digits ignored", () => {
+  assert.deepEqual(extractCodes("Use code WINTER at checkout"), []);
+});
+
+test("number followed by hyphen-digit run excluded, hyphen-letter kept", () => {
+  assert.deepEqual(extractCodes("code 1234-5678 ref"), []);
+  assert.deepEqual(extractCodes("code 12345-A ref"), ["12345"]);
+});
+
+test("rankRows: two null-ts rows keep insertion order", () => {
+  const a = { subject: "code 111111", snippet: "", sender: "A", ts: null };
+  const b = { subject: "code 222222", snippet: "", sender: "B", ts: null };
+  assert.deepEqual(otp_rankRowsCodes([a, b]), ["111111", "222222"]);
+});
+
+function otp_rankRowsCodes(rows) {
+  return rankRows(rows, NOW).map((r) => r.code);
+}

@@ -111,6 +111,9 @@ function parseFeed(xmlText) {
 }
 
 const OtpPeek = { extractCodes, rankRows, ageStr, parseFeed, LOOKBACK_MS };
+/* node:coverage disable */
+// Environment fork: the browser side can never execute under node --test.
 if (typeof module !== "undefined" && module.exports) {
   module.exports = OtpPeek;
 }
+/* node:coverage enable */
