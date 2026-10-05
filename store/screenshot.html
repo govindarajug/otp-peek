@@ -1,0 +1,65 @@
+<!doctype html>
+<!-- Store screenshot source (1280x800). Rendered by `npm run assets`.
+     Sender names are fictional; the popup mock reuses ../popup.css. -->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../popup.css" />
+    <style>
+      html, body { margin: 0; width: 1280px; height: 800px; overflow: hidden; }
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 120px;
+        box-sizing: border-box;
+        background: linear-gradient(160deg, #f0fdfa 0%, #ccfbf1 100%);
+        color: #0f172a;
+        font: 20px/1.5 -apple-system, system-ui, "Segoe UI", Roboto, sans-serif;
+      }
+      .pitch { max-width: 520px; }
+      .pitch img { width: 72px; height: 72px; }
+      .pitch h2 { margin: 16px 0 12px; font-size: 44px; line-height: 1.15; }
+      .pitch ul { margin: 0; padding-left: 24px; color: #334155; }
+      .pitch li { margin: 8px 0; }
+      kbd {
+        padding: 1px 8px;
+        border: 1px solid #94a3b8;
+        border-radius: 6px;
+        background: #fff;
+        font: 16px ui-monospace, Menlo, monospace;
+      }
+      .popup {
+        width: 380px;
+        border-radius: 12px;
+        box-shadow: 0 24px 60px rgba(15, 118, 110, 0.25), 0 2px 8px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        transform: scale(1.35);
+        transform-origin: center right;
+      }
+      .popup .frame { padding: 12px; background: #fff; color: #111; font: 13px/1.4 -apple-system, system-ui, sans-serif; }
+      .popup .row { box-sizing: border-box; }
+    </style>
+  </head>
+  <body>
+    <div class="pitch">
+      <img src="../icons/icon.svg" alt="" />
+      <h2>Your login code, one click away</h2>
+      <ul>
+        <li>Newest one-time codes from your Gmail, no tab switching</li>
+        <li>Click to copy, or press <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd></li>
+        <li>Read-only, nothing stored, nothing leaves your browser</li>
+      </ul>
+    </div>
+    <div class="popup">
+      <div class="frame">
+        <h1>OTP Peek</h1>
+        <div id="list">
+          <button class="row"><span class="code">482913</span><span class="meta">Acme Bank · 12s ago</span></button>
+          <button class="row"><span class="code">7Q4K9Z</span><span class="meta">Northwind · 3m ago</span></button>
+          <button class="row"><span class="code">305718</span><span class="meta">Contoso ID · 14m ago</span></button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

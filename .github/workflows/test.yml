@@ -12,5 +12,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Tests + 100% coverage gate on extractor.js
+      - name: All tests (extractor + store packaging)
+        run: npm test
+      - name: 100% coverage gate on extractor.js
         run: npm run coverage
+      - name: Store zips build
+        run: npm run package

@@ -53,6 +53,24 @@ retires the feed.
   (reason CLIPBOARD, execCommand — navigator.clipboard needs focus).
 - Transport shared via feed.js (fetchFeed/collectRows moved out of popup.js).
 
+## Store publishing (v1.4)
+- Icons: `icons/icon.svg` source → 16/32/48/128 PNGs (committed), wired to
+  manifest `icons` + `action.default_icon`. Store art in `store/` is HTML
+  rendered to PNG; `npm run assets` drives headless Chrome via CDP (Node 22
+  built-in WebSocket), so still no dependencies.
+- Source manifest stays cross-browser for unpacked loading. `npm run package`
+  emits per-store zips with trimmed manifests (Chrome: drop gecko settings +
+  `background.scripts`, add `minimum_chrome_version` 109 for offscreen;
+  Firefox: drop `service_worker` + `offscreen`) and an allowlist of runtime
+  files. Hand-rolled deflate zip writer (zlib + crc32), fixed timestamps →
+  reproducible builds. Not a build step: shipped JS is the source verbatim.
+- `test/package.test.js` gates the allowlist against manifest/HTML/
+  importScripts references and the manifest/package.json version match.
+- Tag `vX.Y.Z` → `release` workflow: tests, package (tag must equal the
+  manifest version), GitHub Release with both zips. Store upload is manual
+  (`docs/publishing.md`); listing copy + permission justifications in
+  `store/listing.md`; privacy policy in `PRIVACY.md`.
+
 ## Permissions & security
 - `host_permissions`: `https://mail.google.com/*` only.
 - `permissions`: `clipboardWrite` + `offscreen` (Chrome-internal clipboard
@@ -75,4 +93,5 @@ retires the feed.
 - Fetch + popup glue: manual (load unpacked, live Gmail).
 
 ## Out of scope v1
-- Auto-fill into OTP fields, icons, store publishing, non-Gmail providers.
+- Auto-fill into OTP fields, non-Gmail providers. (Icons + store
+  publishing landed in v1.4.)
