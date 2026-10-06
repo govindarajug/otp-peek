@@ -19,9 +19,17 @@ which is fresh from the server on every click.
 
 ## Install
 
+From source (works today in every supported browser):
+
 ```sh
 git clone https://github.com/govindarajue6data/otp-peek.git
 ```
+
+Or grab the per-browser zips attached to each
+[GitHub release](https://github.com/govindarajue6data/otp-peek/releases),
+unzip, and load the folder the same way. Store listings (Chrome Web Store,
+addons.mozilla.org) are produced from those same zips; see
+`docs/publishing.md`.
 
 ### Chrome / Chromium
 
@@ -98,6 +106,7 @@ Short version: less than any Gmail tab you already have open.
 - Small enough to audit yourself before installing: `popup.js` (fetch +
   render) and `extractor.js` (code ranking) — a few hundred lines, no
   dependencies, no build step.
+- Full privacy policy (the one the store listings link to): `PRIVACY.md`.
 
 ## How it works
 
@@ -120,11 +129,14 @@ Known tradeoffs:
 ## Development
 
 ```sh
-npm test          # 33 tests, stdlib runner, no install needed
+npm test          # 40 tests, stdlib runner, no install needed
 npm run coverage  # enforces 100% line/branch/function coverage on extractor.js
+npm run package   # store-ready zips in dist/ (Chrome + Firefox)
+npm run assets    # re-render icons + store images (needs local Chrome)
 ```
 
 All parsing/extraction/ranking logic lives in `extractor.js` as pure
 functions at 100% test coverage, and CI fails any PR that drops it. The
 fetch + popup glue is verified manually against live Gmail. Contribution
-rules: `CONTRIBUTING.md`. Design notes: `docs/spec.md`.
+rules: `CONTRIBUTING.md`. Design notes: `docs/spec.md`. Releasing to the
+stores: `docs/publishing.md`.

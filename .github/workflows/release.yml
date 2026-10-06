@@ -1,0 +1,26 @@
+name: release
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Tests + 100% coverage gate on extractor.js
+        run: npm test && npm run coverage
+      - name: Build store zips (fails if the tag != manifest version)
+        run: npm run package
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+      - name: Publish GitHub release with the zips attached
+        run: gh release create "$GITHUB_REF_NAME" dist/*.zip --title "$GITHUB_REF_NAME" --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
