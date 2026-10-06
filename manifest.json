@@ -3,7 +3,7 @@
   "name": "OTP Peek",
   "version": "1.4.0",
   "description": "Shows your newest Gmail OTP. Click or hotkey to copy. No Gmail tab needed; nothing leaves your browser.",
-  "homepage_url": "https://github.com/govindarajue6data/otp-peek",
+  "homepage_url": "https://github.com/govindarajug/otp-peek",
   "icons": {
     "16": "icons/icon-16.png",
     "32": "icons/icon-32.png",
@@ -36,7 +36,7 @@
   "host_permissions": ["https://mail.google.com/*"],
   "browser_specific_settings": {
     "gecko": {
-      "id": "otp-peek@govindarajue6data.github.io",
+      "id": "otp-peek@govindarajug.github.io",
       "strict_min_version": "128.0",
       "data_collection_permissions": {
         "required": ["none"]

@@ -79,7 +79,7 @@ First submission:
    `store/listing.md`.
 4. Paste the **Notes to reviewer** from `store/listing.md`.
 
-The add-on id `otp-peek@govindarajue6data.github.io` in
+The add-on id `otp-peek@govindarajug.github.io` in
 `browser_specific_settings.gecko.id` ties every future upload to this
 listing. Never change it.
 

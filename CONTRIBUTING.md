@@ -12,7 +12,7 @@ Thanks for helping! This project stays deliberately small. Two house rules:
 ## Dev loop
 
 ```sh
-git clone https://github.com/govindarajue6data/otp-peek.git
+git clone https://github.com/govindarajug/otp-peek.git
 npm test          # run the suite
 npm run coverage  # suite + enforced 100% line/branch/function coverage on extractor.js
 ```
