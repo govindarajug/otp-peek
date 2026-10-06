@@ -57,7 +57,7 @@ described above.
 ## Verifying this
 
 The extension is open source and small enough to read in one sitting:
-<https://github.com/govindarajue6data/otp-peek>.
+<https://github.com/govindarajug/otp-peek>.
 
 ## Changes and contact
 

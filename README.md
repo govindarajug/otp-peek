@@ -1,6 +1,6 @@
 # OTP Peek
 
-![tests](https://github.com/govindarajue6data/otp-peek/actions/workflows/test.yml/badge.svg)
+![tests](https://github.com/govindarajug/otp-peek/actions/workflows/test.yml/badge.svg)
 
 Chrome extension: click the toolbar icon, see the newest OTP from your Gmail,
 click it — it's on your clipboard. No more switching to Gmail and hunting for
@@ -22,11 +22,11 @@ which is fresh from the server on every click.
 From source (works today in every supported browser):
 
 ```sh
-git clone https://github.com/govindarajue6data/otp-peek.git
+git clone https://github.com/govindarajug/otp-peek.git
 ```
 
 Or grab the per-browser zips attached to each
-[GitHub release](https://github.com/govindarajue6data/otp-peek/releases),
+[GitHub release](https://github.com/govindarajug/otp-peek/releases),
 unzip, and load the folder the same way. Store listings (Chrome Web Store,
 addons.mozilla.org) are produced from those same zips; see
 `docs/publishing.md`.

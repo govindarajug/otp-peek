@@ -43,16 +43,16 @@ Private by design:
 • Nothing is stored and nothing leaves your browser; the only host it contacts is mail.google.com
 • No analytics, no ads, no servers
 • Open source, a few hundred lines, no dependencies:
-  https://github.com/govindarajue6data/otp-peek
+  https://github.com/govindarajug/otp-peek
 
 Note: codes come from unread mail. If you've already opened the email in
 Gmail, the code won't show.
 
 ## Links
 
-- Homepage / support: https://github.com/govindarajue6data/otp-peek
-- Support / issues: https://github.com/govindarajue6data/otp-peek/issues
-- Privacy policy: https://github.com/govindarajue6data/otp-peek/blob/main/PRIVACY.md
+- Homepage / support: https://github.com/govindarajug/otp-peek
+- Support / issues: https://github.com/govindarajug/otp-peek/issues
+- Privacy policy: https://github.com/govindarajug/otp-peek/blob/main/PRIVACY.md
 
 ## Chrome Web Store: Privacy practices tab
 
