@@ -7,7 +7,7 @@ Thanks for helping! This project stays deliberately small. Two house rules:
 2. **Test-first on logic.** All parsing/extraction/ranking lives in
    `extractor.js` as pure functions. Write the failing test in
    `test/extractor.test.js` before the fix. Browser glue (`popup.js`,
-   `feed.js`, `background.js`) is verified by hand — keep logic out of it.
+   `feed.js`, `background.js`, `background-chrome.js`) is verified by hand — keep logic out of it.
 
 ## Dev loop
 

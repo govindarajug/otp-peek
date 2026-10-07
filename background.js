@@ -1,11 +1,7 @@
 "use strict";
 // Hotkey (Alt+Shift+C): fetch feeds, copy the newest OTP, flash a badge.
-// Runs as a service worker in Chrome (importScripts) and as an event page
-// in Firefox (files preloaded via manifest background.scripts).
-
-if (typeof importScripts === "function" && typeof OtpPeek === "undefined") {
-  importScripts("extractor.js", "feed.js");
-}
+// Runs as a service worker in Chrome (imported by background-chrome.js) and
+// as an event page in Firefox (files preloaded via manifest background.scripts).
 
 const bgExt = globalThis.browser ?? globalThis.chrome;
 
@@ -15,15 +11,8 @@ async function copyText(text) {
     await navigator.clipboard.writeText(text);
     return;
   }
-  // Chrome service worker has no clipboard — relay through an offscreen doc.
-  await chrome.offscreen
-    .createDocument({
-      url: "offscreen.html",
-      reasons: ["CLIPBOARD"],
-      justification: "Write the OTP code to the clipboard",
-    })
-    .catch(() => {}); // already open
-  await chrome.runtime.sendMessage({ type: "copyToClipboard", text });
+  // Chrome service worker has no clipboard — background-chrome.js relays it.
+  await copyViaOffscreen(text);
 }
 
 function flashBadge(text, color) {

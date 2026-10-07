@@ -12,7 +12,7 @@ which is fresh from the server on every click.
 
 ## Requirements
 
-- Chrome or any Chromium browser (Edge, Brave, Arc), **or** Firefox 128+ and
+- Chrome or any Chromium browser (Edge, Brave, Arc), **or** Firefox 140+ and
   Firefox-based browsers (Zen, LibreWolf, Floorp, Waterfox).
 - Signed into Gmail in that browser — personal `@gmail.com` and Google
   Workspace accounts both work. Nothing else.

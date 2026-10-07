@@ -32,7 +32,7 @@ retires the feed.
 
 ## Cross-browser (v1.2)
 - One manifest for both engines: `browser_specific_settings.gecko` (id,
-  min 128, no data collection) is Firefox-only and merely warns in Chrome.
+  min 140, no data collection; `gecko_android` min 142) is Firefox-only and merely warns in Chrome.
 - Popup uses no `chrome.*`/`browser.*` APIs except `permissions`, accessed
   via `globalThis.browser ?? globalThis.chrome`.
 - Firefox MV3 host permissions are opt-in → popup gates on
@@ -46,11 +46,13 @@ retires the feed.
   script reuses feed.js + extractor, copies top code, flashes action badge
   (✓ copied / × none / ! error-or-ungranted) for 3s.
 - Cross-browser background: manifest declares both `service_worker`
-  (Chrome) and `scripts` (Firefox event page); Chrome side importScripts
-  the shared files, guarded on `typeof OtpPeek`.
+  (Chrome: `background-chrome.js`, which importScripts the shared files)
+  and `scripts` (Firefox event page: the shared files directly).
 - Clipboard from background: Firefox event page writes directly
   (clipboardWrite); Chrome service worker relays to an offscreen document
-  (reason CLIPBOARD, execCommand — navigator.clipboard needs focus).
+  (reason CLIPBOARD, execCommand — navigator.clipboard needs focus). The
+  relay, `copyViaOffscreen`, lives in `background-chrome.js` so the Firefox
+  zip has no `offscreen` calls for AMO's linter to flag.
 - Transport shared via feed.js (fetchFeed/collectRows moved out of popup.js).
 
 ## Store publishing (v1.4)
