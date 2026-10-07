@@ -28,7 +28,7 @@ const SHARED_FILES = [
   "icons/icon-48.png",
   "icons/icon-128.png",
 ];
-const CHROME_ONLY_FILES = ["offscreen.html", "offscreen.js"];
+const CHROME_ONLY_FILES = ["background-chrome.js", "offscreen.html", "offscreen.js"];
 
 function chromeManifest(manifest) {
   const out = structuredClone(manifest);

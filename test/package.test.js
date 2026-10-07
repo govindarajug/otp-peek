@@ -41,7 +41,7 @@ test("chrome manifest drops Firefox-only keys", () => {
   const built = chromeManifest(manifest);
   assert.equal(built.browser_specific_settings, undefined);
   assert.equal(built.background.scripts, undefined);
-  assert.equal(built.background.service_worker, "background.js");
+  assert.equal(built.background.service_worker, "background-chrome.js");
   assert.ok(built.permissions.includes("offscreen"));
 });
 
@@ -51,6 +51,21 @@ test("firefox manifest drops Chrome-only keys and keeps the gecko id", () => {
   assert.deepEqual(built.background.scripts, manifest.background.scripts);
   assert.ok(!built.permissions.includes("offscreen"));
   assert.ok(built.browser_specific_settings.gecko.id);
+});
+
+test("firefox zip ships no offscreen calls (AMO flags them)", () => {
+  for (const file of TARGETS.firefox.files.filter((f) => f.endsWith(".js"))) {
+    assert.doesNotMatch(read(file), /\boffscreen\./, `${file} calls the offscreen API`);
+  }
+});
+
+test("gecko minimum versions support data_collection_permissions", () => {
+  // AMO warns when strict_min_version predates the key: Firefox 140,
+  // Firefox for Android 142.
+  const { gecko, gecko_android } = firefoxManifest(manifest).browser_specific_settings;
+  assert.ok(gecko.data_collection_permissions);
+  assert.ok(parseFloat(gecko.strict_min_version) >= 140, "gecko.strict_min_version < 140");
+  assert.ok(parseFloat(gecko_android?.strict_min_version) >= 142, "gecko_android.strict_min_version < 142");
 });
 
 test("transforms do not mutate the source manifest", () => {

@@ -10,8 +10,8 @@ reviewer notes to paste are in `store/listing.md`.
 
 | Zip | Store | Manifest differences from the source `manifest.json` |
 | --- | --- | --- |
-| `otp-peek-chrome-<ver>.zip` | CWS (also Edge Add-ons, Opera) | no `browser_specific_settings`, no `background.scripts`; adds `minimum_chrome_version: 109` |
-| `otp-peek-firefox-<ver>.zip` | AMO | no `background.service_worker`, no `offscreen` permission or offscreen files |
+| `otp-peek-chrome-<ver>.zip` | CWS (also Edge Add-ons, Opera) | no `browser_specific_settings`, no `background.scripts` (runs `background-chrome.js`); adds `minimum_chrome_version: 109` |
+| `otp-peek-firefox-<ver>.zip` | AMO | no `background.service_worker`, no `offscreen` permission, no `background-chrome.js` or offscreen files |
 
 The source tree is still the cross-browser manifest you load unpacked; the
 packaging step only trims each store's copy and ships an allowlist of runtime
